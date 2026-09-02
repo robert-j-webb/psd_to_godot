@@ -227,7 +227,10 @@ def export_psd(psd_path: Path, project_root: Path, output_root: Path) -> Path:
                 continue
 
             try:
-                image = layer.composite()
+                # Render stored pixels even when the layer or one of its PSD
+                # parent groups is hidden. Initial visibility is preserved
+                # separately on the generated Sprite2D node.
+                image = layer.composite(layer_filter=lambda _layer: True)
             except Exception as exc:  # Keep importing independent layers.
                 print(f"Could not render '{layer.name or 'Layer'}': {exc}")
                 continue

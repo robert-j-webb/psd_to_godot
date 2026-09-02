@@ -4,7 +4,7 @@ PSD to Godot is a Godot 4.7 editor add-on that turns the leaf layers in a
 Photoshop PSD or PSB document into PNG textures and a ready-to-open `Sprite2D`
 scene.
 
-This was entirely coded by ChatGPT Sol. It's really just a python wrapper around 
+This was entirely coded by ChatGPT Sol. It's really just a python wrapper around
 [psd-tools.](https://github.com/psd-tools/psd-tools)
 
 ## Screenshots

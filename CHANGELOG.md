@@ -5,6 +5,7 @@ All notable changes to PSD to Godot are documented here.
 - Install `psd-tools` automatically when it is missing.
 - Add setup and completed-import screenshots.
 - Improve successful-import status output and long-path wrapping.
+- Export hidden layer pixels while preserving their initial Godot visibility.
 
 ## 1.0.0 - 2026-09-02
   First version. Be nice
