@@ -54,12 +54,14 @@ func _build_interface() -> void:
 	_add_field_label("Python executable")
 	var python_row := HBoxContainer.new()
 	_python_edit = LineEdit.new()
+	_python_edit.name = "PythonExecutable"
 	_python_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_python_edit.placeholder_text = "python3"
 	_python_edit.tooltip_text = "Python 3.10 or newer. Missing dependencies are installed automatically."
 	_python_edit.text_changed.connect(_on_python_changed)
 	python_row.add_child(_python_edit)
 	_check_button = Button.new()
+	_check_button.name = "CheckInstallButton"
 	_check_button.text = "Check / Install"
 	_check_button.pressed.connect(_check_setup)
 	python_row.add_child(_check_button)
@@ -68,6 +70,7 @@ func _build_interface() -> void:
 	_add_field_label("Photoshop document")
 	var psd_row := HBoxContainer.new()
 	_psd_edit = LineEdit.new()
+	_psd_edit.name = "PhotoshopDocument"
 	_psd_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_psd_edit.placeholder_text = "/path/to/artwork.psd"
 	_psd_edit.text_changed.connect(_on_psd_changed)
@@ -81,6 +84,7 @@ func _build_interface() -> void:
 	_add_field_label("Generated files folder")
 	var output_row := HBoxContainer.new()
 	_output_edit = LineEdit.new()
+	_output_edit.name = "OutputFolder"
 	_output_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_output_edit.placeholder_text = "res://art/generated"
 	_output_edit.tooltip_text = "The generated scene gets its own subfolder here."
@@ -93,11 +97,13 @@ func _build_interface() -> void:
 	add_child(output_row)
 
 	_import_button = Button.new()
+	_import_button.name = "ImportButton"
 	_import_button.text = "Import PSD as Scene"
 	_import_button.pressed.connect(_import_psd)
 	add_child(_import_button)
 
 	_open_button = Button.new()
+	_open_button.name = "OpenSceneButton"
 	_open_button.text = "Open Imported Scene"
 	_open_button.visible = false
 	_open_button.pressed.connect(_open_imported_scene)
@@ -105,9 +111,11 @@ func _build_interface() -> void:
 
 	_add_field_label("Status")
 	_status = TextEdit.new()
+	_status.name = "StatusOutput"
 	_status.custom_minimum_size = Vector2(0, 150)
 	_status.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_status.editable = false
+	_status.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	_status.text = "Choose a Python executable and click Check / Install."
 	add_child(_status)
 
@@ -300,13 +308,26 @@ func _command_finished(kind: String, exit_code: int, output: String) -> void:
 		_set_status("Setup is ready.\n%s" % output.strip_edges())
 		return
 
+	var generated_summary := ""
+	var notices := PackedStringArray()
 	for line in output.split("\n"):
 		if line.begins_with("SCENE_PATH="):
 			_last_scene_path = line.trim_prefix("SCENE_PATH=").strip_edges()
+		elif line.begins_with("Generated "):
+			generated_summary = line.strip_edges()
+		elif line.begins_with("Skipping ") or line.begins_with("Could not render "):
+			notices.append(line.strip_edges())
 
 	_editor_interface.get_resource_filesystem().scan()
 	_open_button.visible = not _last_scene_path.is_empty()
-	_set_status("Import completed.\n%s" % output.strip_edges())
+	var status_message := "Import completed."
+	if not generated_summary.is_empty():
+		status_message += "\n%s" % generated_summary
+	if not _last_scene_path.is_empty():
+		status_message += "\nScene: %s" % _last_scene_path
+	if not notices.is_empty():
+		status_message += "\n\nNotices:\n%s" % "\n".join(notices)
+	_set_status(status_message)
 
 
 func _set_busy(busy: bool) -> void:

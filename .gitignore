@@ -1,1 +1,3 @@
-# There are no generated files here.
+.DS_Store
+__pycache__/
+*.py[cod]
