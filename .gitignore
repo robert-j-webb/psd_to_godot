@@ -1,3 +1,21 @@
+# Godot 4+ generated files.
+.godot/
+.import/
+*.import
+export.cfg
+export_presets.cfg
+*.translation
+
+# Godot Mono generated files.
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS and Python tooling.
 .DS_Store
 __pycache__/
 *.py[cod]
+.venv/
+
+# Locally built release archives.
+/dist/
