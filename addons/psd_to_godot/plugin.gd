@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-const ImportDock := preload("res://addons/psd_to_godot/psd_import_dock.gd")
+const ImportDock := preload("psd_import_dock.gd")
 
 var _dock: EditorDock
 var _content: Control

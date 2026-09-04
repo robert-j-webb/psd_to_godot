@@ -1,7 +1,7 @@
 @tool
 extends VBoxContainer
 
-const HELPER_PATH := "res://addons/psd_to_godot/psd_importer.py"
+const HELPER_FILENAME := "psd_importer.py"
 const METADATA_SECTION := "psd_to_godot"
 
 var _editor_interface: EditorInterface
@@ -203,7 +203,7 @@ func _check_setup() -> void:
 	if not _validate_python():
 		return
 	var arguments := PackedStringArray([
-		ProjectSettings.globalize_path(HELPER_PATH),
+		ProjectSettings.globalize_path(_helper_path()),
 		"--check",
 	])
 	_start_command("check", arguments)
@@ -224,7 +224,7 @@ func _import_psd() -> void:
 		return
 
 	var arguments := PackedStringArray([
-		ProjectSettings.globalize_path(HELPER_PATH),
+		ProjectSettings.globalize_path(_helper_path()),
 		"--project-root",
 		ProjectSettings.globalize_path("res://"),
 		"--output-dir",
@@ -232,6 +232,10 @@ func _import_psd() -> void:
 		psd_path,
 	])
 	_start_command("import", arguments)
+
+
+func _helper_path() -> String:
+	return get_script().resource_path.get_base_dir().path_join(HELPER_FILENAME)
 
 
 func _validate_python() -> bool:
